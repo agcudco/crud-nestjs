@@ -47,3 +47,11 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+
+## Ejecutar analisis con SonarQube
+
+```bash
+# ejecutar comando del sonar
+$ sonar-scanner
+```
