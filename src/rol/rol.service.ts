@@ -1,35 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Rol } from './rol.entity';
 
 @Injectable()
 export class RolService {
-
   constructor(
     @InjectRepository(Rol)
     private readonly rolRepository: Repository<Rol>,
-  ) { }
+  ) {}
 
-  findAll(): Promise<Rol[]> {
-    return this.rolRepository.find();
+  /**
+   * Retorna todos los roles con sus usuarios relacionados.
+   */
+  async findAll(): Promise<Rol[]> {
+    return await this.rolRepository.find({ relations: ['usuarios'] });
   }
 
-  findOne(id: number): Promise<Rol | null> {
-    return this.rolRepository.findOne({ where: { id } });
+  /**
+   * Retorna un rol por su ID.
+   * @param id - Identificador del rol a buscar.
+   * @throws NotFoundException si no se encuentra el rol.
+   */
+  async findOne(id: number): Promise<Rol> {
+    const rol = await this.rolRepository.findOne({
+      where: { id },
+      relations: ['usuarios'],
+    });
+    if (!rol) {
+      throw new NotFoundException(`El rol con id ${id} no existe`);
+    }
+    return rol;
   }
 
-  create(rol: Partial<Rol>): Promise<Rol> {
-    const newRol = this.rolRepository.create(rol);
-    return this.rolRepository.save(newRol);
+  /**
+   * Crea un nuevo rol.
+   * @param data - Datos del rol a crear.
+   */
+  async create(data: Partial<Rol>): Promise<Rol> {
+    const rol = this.rolRepository.create(data);
+    return await this.rolRepository.save(rol);
   }
 
-  async update(id: number, rol: Partial<Rol>): Promise<Rol | null> {
-    await this.rolRepository.update(id, rol);
+  /**
+   * Actualiza un rol existente.
+   * @param id - Identificador del rol a actualizar.
+   * @param changes - Cambios a aplicar.
+   */
+  async update(id: number, changes: Partial<Rol>): Promise<Rol> {
+    await this.rolRepository.update(id, changes);
     return this.findOne(id);
   }
 
-  async delete(id: number): Promise<void> {
-    await this.rolRepository.delete(id);
+  /**
+   * Elimina un rol por su ID.
+   * @param id - Identificador del rol a eliminar.
+   */
+  async remove(id: number): Promise<void> {
+    const rol = await this.findOne(id);
+    await this.rolRepository.remove(rol);
   }
 }

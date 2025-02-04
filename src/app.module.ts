@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Rol } from './rol/rol.entity';
-import { Usuario } from './usuario/usuario.entity';
-import { RolUsuario } from './rol-usurio/rol-usuario.entity';
 import { RolModule } from './rol/rol.module';
 import { UsuarioModule } from './usuario/usuario.module';
-import { RolUsuarioModule } from './rol-usurio/rol-usuario.module';
+import { ProyectoModule } from './proyecto/proyecto.module';
+import { TareaModule } from './tarea/tarea.module';
+
 
 @Module({
   imports: [
@@ -16,12 +15,14 @@ import { RolUsuarioModule } from './rol-usurio/rol-usuario.module';
       username: 'postgres',
       password: 'postgres',
       database: 'usuarios-bd',
-      entities: [Rol, Usuario, RolUsuario],
+      //entities: [Rol, Usuario],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // ¡Solo para desarrollo!
     }),
     RolModule,
     UsuarioModule,
-    RolUsuarioModule,
+    ProyectoModule,
+    TareaModule
   ],
 })
 export class AppModule {}

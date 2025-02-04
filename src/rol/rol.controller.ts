@@ -1,44 +1,65 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { RolService } from './rol.service';
 import { Rol } from './rol.entity';
 
-@Controller('roles')
+@Controller('rol')
 export class RolController {
+  constructor(private readonly rolService: RolService) {}
 
-  constructor(private readonly rolService: RolService) { }
-
+  /**
+   * Obtiene todos los roles.
+   */
   @Get()
   async findAll(): Promise<Rol[]> {
-    return this.rolService.findAll();
+    return await this.rolService.findAll();
   }
 
+  /**
+   * Obtiene un rol por su ID.
+   * @param id Número identificador del rol.
+   */
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Rol | null> {
-    return this.rolService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Rol> {
+    return await this.rolService.findOne(id);
   }
 
+  /**
+   * Crea un nuevo rol.
+   * @param data Datos del rol a crear.
+   */
   @Post()
   async create(@Body() data: Partial<Rol>): Promise<Rol> {
-    return this.rolService.create(data);
+    return await this.rolService.create(data);
   }
 
-
   /**
-   * PUT /roles/:id
    * Actualiza un rol existente.
+   * @param id Número identificador del rol.
+   * @param changes Cambios a aplicar.
    */
   @Put(':id')
-  async update(@Param('id') id: number, @Body() data: Partial<Rol>): Promise<Rol | null> {
-    return this.rolService.update(id, data);
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() changes: Partial<Rol>,
+  ): Promise<Rol> {
+    return await this.rolService.update(id, changes);
   }
 
-
   /**
-     * DELETE /roles/:id
-     * Elimina un rol por su ID.
-     */
+   * Elimina un rol por su ID.
+   * @param id Número identificador del rol.
+   */
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<void> {
-    return this.rolService.delete(id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return await this.rolService.remove(id);
   }
 }
