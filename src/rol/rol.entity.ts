@@ -1,9 +1,17 @@
-import { Usuario } from 'src/usuario/usuario.entity';
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+// src/rol/rol.entity.ts
+import { Usuario } from '../usuario/usuario.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'rol' })
 export class Rol {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,9 +22,9 @@ export class Rol {
   descripcion?: string;
 
   /**
-  * Fecha de creación del registro.
-  * Se asigna automáticamente al insertar un nuevo rol.
-  */
+   * Fecha de creación del registro.
+   * Se asigna automáticamente al insertar un nuevo rol.
+   */
   @CreateDateColumn()
   creadoEn: Date;
 
@@ -27,7 +35,7 @@ export class Rol {
   @UpdateDateColumn()
   actualizadoEn: Date;
 
-  @ManyToMany(() => Usuario, usuario => usuario.roles)
-  @JoinTable({ name: "usuario_roles" })
+  @ManyToMany(() => Usuario, (usuario) => usuario.roles)
+  @JoinTable({ name: 'usuario_roles' })
   usuarios: Usuario[];
 }
